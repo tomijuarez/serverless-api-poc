@@ -1,4 +1,8 @@
-service: serverless-api-poc
+service: serverles-api-poc
+
+plugins:
+  - serverless-offline
+  - serverless-dynamodb-local
 
 provider:
   name: aws
@@ -13,6 +17,7 @@ provider:
         Fn::GetAtt:
           - matchResultsTable
           - Arn
+
 functions:
   registerResult:
     handler: matchHandler.handleRegisterResult
@@ -39,3 +44,14 @@ resources:
           - AttributeName: matchId
             AttributeType: S
         BillingMode: PAY_PER_REQUEST
+
+custom:
+    dynamodb:
+      stages:
+        - dev
+      start:
+        port: 8000
+        inMemory: true
+        migrate: true
+      migration:
+        dir: offline/migrations
