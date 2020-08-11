@@ -1,4 +1,4 @@
-const DynamoDB = require('aws-sdk/clients/dynamodb');
+const dynamoDb = require('serverless-dynamodb-client');
 const MatchMapper = require('./mapper/matchMapper')
 
 class MatchService {
@@ -6,12 +6,12 @@ class MatchService {
     static TABLE_NAME = 'matchResults';
 
     constructor() {
-        this.dynamoClient = new DynamoDB();
+        this.dynamoClient = dynamoDb.doc;
         this.matchMapper = new MatchMapper();
     }
 
-    async registerMatchResult(matchResult) {
-        const match = this.matchMapper.toResource(matchResult);
+    async registerMatchResult({ body }) {
+        const match = this.matchMapper.toResource(body);
 
         return this.dynamoClient.putItem({ TableName: MatchService.TABLE_NAME, Item: this.matchMapper.toRecord(match)})
             .promise()
@@ -20,7 +20,7 @@ class MatchService {
     }
 
     async fetchResult(matchId) {
-        return this.dynamoClient.getItem({ TableName: MatchService.TABLE_NAME, Key: { "matchId": { S: matchId } }})
+        return this.dynamoClient.get({ TableName: MatchService.TABLE_NAME, Key: { "matchId": { S: matchId } }})
             .promise()
             .then(data => {
                 console.log(`-----> ${data.Item}`);
