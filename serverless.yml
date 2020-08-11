@@ -1,0 +1,41 @@
+service: serverless-api-poc
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+       - dynamodb:PutItem
+       - dynamodb:GetItem
+      Resource:
+        Fn::GetAtt:
+          - matchResultsTable
+          - Arn
+functions:
+  registerResult:
+    handler: matchHandler.handleRegisterResult
+    events:
+      - http:
+          path: /api/match/result
+          method: post
+  fetchResult:
+    handler: matchHandler.handleFetchResult
+    events:
+      - http:
+          path: /api/match/result/{matchId}
+          method: get
+resources:
+  Resources:
+    matchResultsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: matchResults
+        KeySchema:
+          - AttributeName: matchId
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: matchId
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
