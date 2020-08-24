@@ -10,28 +10,26 @@ class MatchService {
         this.matchMapper = new MatchMapper();
     }
 
-    async registerMatchResult({ body }) {
-        const match = this.matchMapper.toResource(body);
+    async registerMatchResult(matchResult) {
+        const match = this.matchMapper.toResource(matchResult);
 
-        return this.dynamoClient.putItem({ TableName: MatchService.TABLE_NAME, Item: this.matchMapper.toRecord(match)})
+        return this.dynamoClient.put({ TableName: MatchService.TABLE_NAME, Item: this.matchMapper.toRecord(match)})
             .promise()
             .then(matchResult)
-            .catch(e => { throw new Error(`A tremendous error has occurred ${e.stack}`); });
+            .catch(e => { throw new Error(`An error has occurred ${e.stack}`); });
     }
 
     async fetchResult(matchId) {
-        return this.dynamoClient.get({ TableName: MatchService.TABLE_NAME, Key: { "matchId": { S: matchId } }})
+        return this.dynamoClient.get({ TableName: MatchService.TABLE_NAME, Key: { "matchId": matchId } })
             .promise()
             .then(data => {
-                console.log(`-----> ${data.Item}`);
-                if (!data.Item) {
-                    throw new Error(`Ah bueno adios master :v`);
+                if (data.Item === undefined) {
+                    throw new Error(`The requested item does not exist`);
                 }
-                return data;
+                return data.Item;
             })
-            .then(item => DynamoDB.Converter.unmarshall(item))
-            .then(parsedItem => this.matchMapper.toResource(parsedItem))
-            .catch(e => { throw new Error(`A tremendous error has occurred ${e.stack}`); });
+            .then(item => this.matchMapper.toResource(item))
+            .catch(e => { throw new Error(`An error has occurred ${e.stack}`); });
     }
 }
 

@@ -13,12 +13,12 @@ class MatchMapper {
 
     toRecord(matchResource) {
         return {
-            "matchId": { S: matchResource.matchId },
-            "startTime": { S: matchResource.startTime },
-            "endTime": { S: matchResource.endTime },
-            "winnerId": { S: matchResource.winnerId },
-            "playersNumber": { N: matchResource.playersNumber.toString() },
-            "matchType": { S: matchResource.matchType }
+            "matchId": matchResource.matchId,
+            "startTime": matchResource.startTime,
+            "endTime": matchResource.endTime,
+            "winnerId": matchResource.winnerId,
+            "playersNumber": matchResource.playersNumber,
+            "matchType": matchResource.matchType
         }
     }
 }

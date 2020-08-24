@@ -1,9 +1,5 @@
 class Match {
 
-    constructor() {
-        this.matchTypes = ["SQUAD", "DUO", "ARENA-SINGLE", "ARENA-THREESOME"];
-    }
-
     matchId(matchId) {
         this.matchId = matchId;
         return this;
@@ -34,7 +30,9 @@ class Match {
     }
 
     matchType(matchType) {
-        if (this.matchTypes.includes(matchType)) {
+        const matchTypes = ["SQUAD", "DUO", "ARENA-SINGLE", "ARENA-THREESOME"];
+
+        if (matchTypes.includes(matchType)) {
             this.matchType = matchType;
             return this;
         }

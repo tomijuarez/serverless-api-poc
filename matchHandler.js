@@ -4,7 +4,7 @@ const matchService = require('./service/matchService');
 
 const handleRegisterResult = async event => {
   try {
-    const result = await matchService.registerMatchResult(event);
+    const result = await matchService.registerMatchResult(JSON.parse(event.body));
     return { statusCode: 201, body: JSON.stringify(result) };
   } catch (e) {
     return { statusCode: 500, body: `An unexpected error has occurred ${e}` }
